@@ -22,6 +22,10 @@
             android:label="Add a Product"
             android:name=".AddAProduct"
             tools:targetApi="jelly_bean" />
+
+        <provider
+            android:authorities="com.inventoryprovider"
+            android:name="com.fernandoapeguero.myinventory.data.InventoryProvider"/>
     </application>
 
 </manifest>

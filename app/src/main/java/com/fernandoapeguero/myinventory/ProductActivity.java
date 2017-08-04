@@ -2,6 +2,7 @@ package com.fernandoapeguero.myinventory;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -10,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fernandoapeguero.myinventory.data.InventoryContract.InventoryEntrys;
@@ -60,6 +62,55 @@ public class ProductActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        displayDatabaseInfo();
+    }
+
+    private void displayDatabaseInfo (){
+
+
+        SQLiteDatabase db = iDbHelper.getReadableDatabase();
+
+        String[] projection = {
+                InventoryEntrys._ID,
+                InventoryEntrys.PRODUCT_NAME,
+                InventoryEntrys.PRODUCT_PRICE,
+                InventoryEntrys.PRODUCT_QUANTITY,
+                InventoryEntrys.PRODUCT_WEIGHT,
+        };
+
+        Cursor cursor = db.query(
+                InventoryEntrys.TABLE_NAME,
+                projection,
+                null,
+                null,null,null,null);
+        TextView displayText = (TextView) findViewById(R.id.example_preview);
+        displayText.setText("inventory table contains ");
+        try {
+
+
+            int nameColumnIndex = cursor.getColumnIndex(InventoryEntrys.PRODUCT_NAME);
+            int priceColumnIndex = cursor.getColumnIndex(InventoryEntrys.PRODUCT_PRICE);
+            int quantityColumnIndex = cursor.getColumnIndex(InventoryEntrys.PRODUCT_QUANTITY);
+            int weightColumnIndex = cursor.getColumnIndex(InventoryEntrys.PRODUCT_WEIGHT);
+
+            while (cursor.moveToNext()) {
+
+                String productName = cursor.getString(nameColumnIndex);
+                int productPrice = cursor.getInt(priceColumnIndex);
+                int productQuantity = cursor.getInt(quantityColumnIndex);
+                int productWeight = cursor.getInt(weightColumnIndex);
+
+
+                displayText.append("table info " + InventoryEntrys.TABLE_NAME + " " + productName + " " + productPrice + " " + productQuantity + " " + productWeight);
+            }
+        } finally {
+            cursor.close();
+        }
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -76,6 +127,7 @@ public class ProductActivity extends AppCompatActivity {
             case R.id.insert_dummy_data:
                 // insert logic to insert dummy data to inventory database
                 insertDummyData();
+                displayDatabaseInfo();
 
                 return true;
             case R.id.delete_all:

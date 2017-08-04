@@ -12,4 +12,5 @@
     <string name="kilogram">kg</string>
     <string name="insert_dummy_product">Insert Dummy Product</string>
     <string name="delete_all_product">Delete all Product</string>
+    <string name="delete_product">Delete Product</string>
 </resources>
