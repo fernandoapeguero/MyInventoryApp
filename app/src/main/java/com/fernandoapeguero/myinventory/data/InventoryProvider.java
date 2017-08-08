@@ -119,6 +119,8 @@ public class InventoryProvider extends ContentProvider {
 
              Log.e(LOG_TAG, "failed to insert row for " + uri);
          }
+
+         getContext().getContentResolver().notifyChange(uri,null);
      return ContentUris.withAppendedId(uri,id);
     }
 
@@ -159,6 +161,13 @@ public class InventoryProvider extends ContentProvider {
         SQLiteDatabase db = iDbHelper.getWritableDatabase();
 
        int updatedRows =  db.update(InventoryEntrys.TABLE_NAME,values,selection,selectionArgs);
+
+        if (updatedRows != 0){
+
+            db.update(InventoryEntrys.TABLE_NAME,values,selection,selectionArgs);
+
+            getContext().getContentResolver().notifyChange(uri,null);
+        }
 
 
         return updatedRows;

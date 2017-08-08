@@ -1,9 +1,12 @@
 package com.fernandoapeguero.myinventory;
 
+import android.app.LoaderManager;
 import android.content.ContentValues;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -11,20 +14,29 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.ListView;
 
 import com.fernandoapeguero.myinventory.data.InventoryContract.InventoryEntrys;
-import com.fernandoapeguero.myinventory.data.InventoryDbHelper;
+import com.fernandoapeguero.myinventory.data.InventoryCursorAdapter;
 
-public class ProductActivity extends AppCompatActivity {
+public class ProductActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
-    private InventoryDbHelper iDbHelper ;
+
+
+    private static final int INVENTORY_LOADER = 1;
+
+    private InventoryCursorAdapter mCursorAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product);
+
+        ListView listviewProduct = (ListView) findViewById(R.id.list_view);
+
+        mCursorAdapter = new InventoryCursorAdapter(this,null);
+
+        listviewProduct.setAdapter(mCursorAdapter);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.floating_button);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -36,13 +48,13 @@ public class ProductActivity extends AppCompatActivity {
             }
         });
 
-        iDbHelper = new InventoryDbHelper(ProductActivity.this);
+         getLoaderManager().initLoader(INVENTORY_LOADER,null,this);
 
     }
 
     private void insertDummyData(){
 
-        SQLiteDatabase db = iDbHelper.getWritableDatabase();
+
 
         ContentValues values = new ContentValues();
         values.put(InventoryEntrys.PRODUCT_NAME, " Lasagna en polvo ");
@@ -50,65 +62,8 @@ public class ProductActivity extends AppCompatActivity {
         values.put(InventoryEntrys.PRODUCT_QUANTITY , 20);
         values.put(InventoryEntrys.PRODUCT_WEIGHT, 3);
 
-        long id =  db.insert(InventoryEntrys.TABLE_NAME, null , values);
+        Uri newUri = getContentResolver().insert(InventoryEntrys.CONTENT_URI,values);
 
-        if (id == -1){
-
-            throw new IllegalArgumentException( " values failed to be added to databse ");
-        } else {
-
-            Toast.makeText(this, "Product added", Toast.LENGTH_SHORT).show();
-        }
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        displayDatabaseInfo();
-    }
-
-    private void displayDatabaseInfo (){
-
-
-        SQLiteDatabase db = iDbHelper.getReadableDatabase();
-
-        String[] projection = {
-                InventoryEntrys._ID,
-                InventoryEntrys.PRODUCT_NAME,
-                InventoryEntrys.PRODUCT_PRICE,
-                InventoryEntrys.PRODUCT_QUANTITY,
-                InventoryEntrys.PRODUCT_WEIGHT,
-        };
-
-        Cursor cursor = db.query(
-                InventoryEntrys.TABLE_NAME,
-                projection,
-                null,
-                null,null,null,null);
-        TextView displayText = (TextView) findViewById(R.id.example_preview);
-        displayText.setText("inventory table contains ");
-        try {
-
-
-            int nameColumnIndex = cursor.getColumnIndex(InventoryEntrys.PRODUCT_NAME);
-            int priceColumnIndex = cursor.getColumnIndex(InventoryEntrys.PRODUCT_PRICE);
-            int quantityColumnIndex = cursor.getColumnIndex(InventoryEntrys.PRODUCT_QUANTITY);
-            int weightColumnIndex = cursor.getColumnIndex(InventoryEntrys.PRODUCT_WEIGHT);
-
-            while (cursor.moveToNext()) {
-
-                String productName = cursor.getString(nameColumnIndex);
-                int productPrice = cursor.getInt(priceColumnIndex);
-                int productQuantity = cursor.getInt(quantityColumnIndex);
-                int productWeight = cursor.getInt(weightColumnIndex);
-
-
-                displayText.append("table info " + InventoryEntrys.TABLE_NAME + " " + productName + " " + productPrice + " " + productQuantity + " " + productWeight);
-            }
-        } finally {
-            cursor.close();
-        }
     }
 
 
@@ -127,7 +82,6 @@ public class ProductActivity extends AppCompatActivity {
             case R.id.insert_dummy_data:
                 // insert logic to insert dummy data to inventory database
                 insertDummyData();
-                displayDatabaseInfo();
 
                 return true;
             case R.id.delete_all:
@@ -138,5 +92,31 @@ public class ProductActivity extends AppCompatActivity {
             return super.onOptionsItemSelected(item);
         }
 
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+
+        String[] projection = {
+                InventoryEntrys._ID,
+                InventoryEntrys.PRODUCT_NAME,
+                InventoryEntrys.PRODUCT_PRICE,
+                InventoryEntrys.PRODUCT_QUANTITY,
+                InventoryEntrys.PRODUCT_WEIGHT
+        };
+        return new CursorLoader(this,InventoryEntrys.CONTENT_URI,projection,null,null,null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+        mCursorAdapter.swapCursor(data);
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+        mCursorAdapter.swapCursor(null);
     }
 }

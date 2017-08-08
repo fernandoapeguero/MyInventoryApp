@@ -25,7 +25,8 @@
 
         <provider
             android:authorities="com.inventoryprovider"
-            android:name="com.fernandoapeguero.myinventory.data.InventoryProvider"/>
+            android:name="com.fernandoapeguero.myinventory.data.InventoryProvider"
+            android:exported="false"/>
     </application>
 
 </manifest>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/product_name_textview"
+        tools:text="Cheese Cake"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="#2B3D4D"/>
+
+    <TextView
+         android:id="@+id/product_price_textview"
+        tools:text="$ 198.99"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:fontFamily="sans-serif"
+        android:textColor="#AEB6BD"/>
+
+
+</LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content">
+
+            <TextView
+
+                tools:text="Quantity"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#2B3D4D"/>
+
+            <TextView
+                android:id="@+id/product_quantity_textView"
+                tools:text="10"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textColor="#AEB6BD"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:text="kg"
+        android:id="@+id/kg"
+        android:textColor="#2B3D4D"
+        android:paddingTop="8dp"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/weight_textview"
+        android:paddingTop="14dp"
+        android:layout_alignParentRight="true"
+        android:paddingRight="16dp"
+        tools:text="25"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>

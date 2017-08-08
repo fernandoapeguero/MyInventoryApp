@@ -12,7 +12,7 @@ public class InventoryContract  {
 
     public static final String CONTENT_AUTHORITY = "com.inventoryprovider";
     public static final String PATH_INVENTORY = "inventory";
-    public static final Uri BASECONTENT_URI = Uri.parse("Content://" + CONTENT_AUTHORITY);
+    public static final Uri BASECONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     public static final class InventoryEntrys implements BaseColumns{
 
