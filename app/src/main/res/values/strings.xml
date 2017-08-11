@@ -13,4 +13,9 @@
     <string name="insert_dummy_product">Insert Dummy Product</string>
     <string name="delete_all_product">Delete all Product</string>
     <string name="delete_product">Delete Product</string>
+    <string name="product">Product :&#160;</string>
+    <string name="price_textview">Price :&#160;$&#160;</string>
+    <string name="quantity_textview">Quantity :&#160;</string>
+    <string name="weight_textview">Weight :&#160;</string>
+    <string name="kg">kg</string>
 </resources>

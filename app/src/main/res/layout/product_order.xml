@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context="com.fernandoapeguero.myinventory.ProductOrder">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/product_name_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="16dp"
+            android:textColor="@android:color/black"
+            android:textSize="34sp"
+            tools:text="Smoke Turkey" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:paddingLeft="16dp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="16dp">
+
+                <TextView
+                    style="@style/purchase_order_textview_style"
+                    android:text="@string/price_textview"
+                    android:textColor="@android:color/black"/>
+
+
+                <TextView
+                    style="@style/purchase_order_textview_style"
+                    android:text="@string/quantity_textview"
+                    android:textColor="@android:color/black"/>
+
+                <TextView
+                    style="@style/purchase_order_textview_style"
+                   android:textColor="@android:color/black"
+                    android:text="@string/weight_textview"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:paddingTop="16dp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/purchase_order_textview_style"
+                    tools:text="12.99"
+                   />
+
+                <Spinner
+                    android:layout_marginTop="16dp"
+                    style="@style/purchase_order_textview_style"
+                    android:id="@+id/quantity_spinner"
+                   />
+
+                <TextView
+                    tools:text="25kg"
+                    style="@style/purchase_order_textview_style"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

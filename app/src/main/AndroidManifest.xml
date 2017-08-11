@@ -18,15 +18,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:parentActivityName=".ProductActivity"
-            android:label="Add a Product"
             android:name=".AddAProduct"
+            android:parentActivityName=".ProductActivity"
             tools:targetApi="jelly_bean" />
 
         <provider
+            android:name=".data.InventoryProvider"
             android:authorities="com.inventoryprovider"
-            android:name="com.fernandoapeguero.myinventory.data.InventoryProvider"
-            android:exported="false"/>
+            android:exported="false" />
+
+        <activity android:name=".ProductOrder"></activity>
     </application>
 
 </manifest>

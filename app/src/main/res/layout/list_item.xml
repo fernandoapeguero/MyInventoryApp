@@ -1,82 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:padding="16dp">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <ImageView
+        android:layout_width="78dp"
+        android:layout_height="78dp"
+        android:src="@drawable/inventory_icon" />
 
     <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    <LinearLayout
-        android:orientation="vertical"
         android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content">
-
-    <TextView
-        android:id="@+id/product_name_textview"
-        tools:text="Cheese Cake"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:textAppearanceMedium"
-        android:fontFamily="sans-serif-medium"
-        android:textColor="#2B3D4D"/>
-
-    <TextView
-         android:id="@+id/product_price_textview"
-        tools:text="$ 198.99"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:textAppearanceSmall"
-        android:fontFamily="sans-serif"
-        android:textColor="#AEB6BD"/>
+        android:layout_weight="1.5"
+        android:orientation="vertical"
+        android:paddingLeft="8dp"
+        android:paddingTop="8dp">
 
 
-</LinearLayout>
+        <TextView
+            style="@style/label_style"
+            android:text="@string/product" />
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content">
 
-            <TextView
+        <TextView
+            style="@style/label_style"
+            android:text="@string/price_textview" />
 
-                tools:text="Quantity"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#2B3D4D"/>
+        <TextView
+            style="@style/label_style"
+            android:text="@string/quantity_textview" />
 
-            <TextView
-                android:id="@+id/product_quantity_textView"
-                tools:text="10"
-                android:textAppearance="?android:textAppearanceSmall"
-                android:textColor="#AEB6BD"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
     </LinearLayout>
 
-    <TextView
-        android:text="kg"
-        android:id="@+id/kg"
-        android:textColor="#2B3D4D"
-        android:paddingTop="8dp"
-        android:layout_alignParentRight="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/weight_textview"
-        android:paddingTop="14dp"
-        android:layout_alignParentRight="true"
-        android:paddingRight="16dp"
-        tools:text="25"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2.5"
+        android:orientation="vertical"
+        android:paddingTop="8dp">
 
-</RelativeLayout>
+
+        <TextView
+            android:id="@+id/product_name_textview"
+            style="@style/label_style"
+            android:textColor="@color/colorAccent"
+            tools:text="Cheese Cake" />
+
+
+        <TextView
+            android:id="@+id/product_price_textview"
+            style="@style/label_style"
+            android:textColor="@color/colorAccent"
+            tools:text=" 198.99" />
+
+
+        <TextView
+            android:id="@+id/product_quantity_textView"
+            style="@style/label_style"
+            android:textColor="@color/colorAccent"
+            tools:text="10" />
+
+
+    </LinearLayout>
+
+</LinearLayout>

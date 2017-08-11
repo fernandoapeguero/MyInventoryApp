@@ -66,9 +66,9 @@ public class InventoryProvider extends ContentProvider {
             default:
                throw  new IllegalArgumentException("Cursor can't query unknow uri" + uri);
 
-
-
         }
+
+        cursor.setNotificationUri(getContext().getContentResolver(),uri);
         return cursor;
     }
 
@@ -103,7 +103,7 @@ public class InventoryProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("insertion is not supported for " + uri);
         }
-
+   getContext().getContentResolver().notifyChange(uri,null);
         return null;
     }
 

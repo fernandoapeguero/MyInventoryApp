@@ -1,6 +1,7 @@
 package com.fernandoapeguero.myinventory;
 
 import android.app.LoaderManager;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.fernandoapeguero.myinventory.data.InventoryContract.InventoryEntrys;
@@ -43,8 +45,22 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
             @Override
             public void onClick(View v) {
                 Intent fabIntent = new Intent(ProductActivity.this, AddAProduct.class);
+
                 startActivity(fabIntent);
 
+            }
+        });
+
+        listviewProduct.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent listItent = new Intent(ProductActivity.this, ProductOrder.class);
+
+                Uri currentUri = ContentUris.withAppendedId(InventoryEntrys.CONTENT_URI,id);
+
+                listItent.setData(currentUri);
+
+                startActivity(listItent);
             }
         });
 
@@ -57,7 +73,7 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
 
 
         ContentValues values = new ContentValues();
-        values.put(InventoryEntrys.PRODUCT_NAME, " Lasagna en polvo ");
+        values.put(InventoryEntrys.PRODUCT_NAME, " cheese cake  ");
         values.put(InventoryEntrys.PRODUCT_PRICE,   12);
         values.put(InventoryEntrys.PRODUCT_QUANTITY , 20);
         values.put(InventoryEntrys.PRODUCT_WEIGHT, 3);

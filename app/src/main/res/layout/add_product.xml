@@ -25,13 +25,13 @@
             android:paddingLeft="4dp">
 
             <EditText
-                android:id="@+id/product_name"
+                android:id="@+id/product_name_editfield"
                 style="@style/add_product_edit_text_style"
                 android:hint="@string/name"
                 android:inputType="textCapWords" />
 
             <EditText
-                android:id="@+id/product_price"
+                android:id="@+id/product_price_editfield"
                 style="@style/add_product_edit_text_style"
                 android:hint="@string/price"
                 android:inputType="number" />
@@ -57,7 +57,7 @@
             android:paddingLeft="4dp">
 
             <EditText
-                android:id="@+id/product_quantity"
+                android:id="@+id/product_quantity_editfield"
                 style="@style/add_product_edit_text_style"
                 android:hint="@string/quantity"
                 android:inputType="number" />
@@ -80,7 +80,7 @@
             android:paddingLeft="4dp">
 
         <EditText
-            android:id="@+id/product_weight"
+            android:id="@+id/product_weight_editfield"
             style="@style/add_product_edit_text_style"
             android:hint="@string/weight"
             android:inputType="number"/>
