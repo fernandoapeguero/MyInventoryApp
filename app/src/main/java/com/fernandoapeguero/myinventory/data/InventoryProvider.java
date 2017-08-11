@@ -150,7 +150,7 @@ public class InventoryProvider extends ContentProvider {
                     throw new IllegalArgumentException("can not match uri " + uri);
         }
 
-
+  getContext().getContentResolver().notifyChange(uri,null);
 
         return deletedRows;
     }

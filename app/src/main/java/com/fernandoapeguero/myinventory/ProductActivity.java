@@ -82,6 +82,14 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
 
     }
 
+    private void deleteAllProducts(){
+
+
+        getContentResolver().delete(InventoryEntrys.CONTENT_URI,null,null);
+
+
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -101,6 +109,7 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
 
                 return true;
             case R.id.delete_all:
+                deleteAllProducts();
                 // insert logic to deleted all of the product in the database
 
                 return true;
