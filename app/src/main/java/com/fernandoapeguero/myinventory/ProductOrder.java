@@ -148,13 +148,6 @@ public class ProductOrder extends AppCompatActivity implements LoaderManager.Loa
             quantityOrder.setText(Integer.toString(productQuantity));
             weightOrder.setText(Integer.toString(productWeight));
 
-            if (productQuantity == 0 ){
-
-                Toast.makeText(this, "This item is out of stock select another product", Toast.LENGTH_SHORT).show();
-                getContentResolver().delete(mCurrentUri,null,null);
-                finish();
-            }
-
 
         }
     }

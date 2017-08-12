@@ -20,4 +20,10 @@
     <string name="kg">kg</string>
     <string name="order_summary">Order Summary</string>
     <string name="order_now">Order Now</string>
+    <string name="sale">Sale</string>
+    <string name="i_m_hungry_add_more_products">I\'m hungry add more products.</string>
+
+    <string name="delete_dialog">Delete</string>
+    <string name="cancel">Cancel</string>
+
 </resources>

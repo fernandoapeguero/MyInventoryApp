@@ -1,15 +1,18 @@
 package com.fernandoapeguero.myinventory;
 
+import android.app.Dialog;
 import android.app.LoaderManager;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,9 +20,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.fernandoapeguero.myinventory.data.InventoryContract.InventoryEntrys;
 import com.fernandoapeguero.myinventory.data.InventoryCursorAdapter;
+
+import java.util.EmptyStackException;
+
+import butterknife.BindString;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class ProductActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
@@ -29,10 +39,13 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
 
     private InventoryCursorAdapter mCursorAdapter;
 
+    @BindView(R.id.empty_state_textview) TextView emptyTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product);
+        ButterKnife.bind(this);
 
         ListView listviewProduct = (ListView) findViewById(R.id.list_view);
 
@@ -64,6 +77,8 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
             }
         });
 
+        listviewProduct.setEmptyView(emptyTextView);
+
          getLoaderManager().initLoader(INVENTORY_LOADER,null,this);
 
     }
@@ -90,6 +105,26 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
 
     }
 
+    private void dialogBuilder (){
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Do you want to deleted all the products?");
+        builder.setPositiveButton(R.string.delete_dialog, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deleteAllProducts();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -109,7 +144,7 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
 
                 return true;
             case R.id.delete_all:
-                deleteAllProducts();
+                dialogBuilder();
                 // insert logic to deleted all of the product in the database
 
                 return true;
