@@ -49,10 +49,12 @@ public class ProductOrder extends AppCompatActivity implements LoaderManager.Loa
     private double productPrice;
     private int productWeight;
     private int myOrderQuantity = 0;
+    private int newValue = 0;
 
     private Uri mCurrentUri;
 
     private static final int ORDER_PRODUCT_LOADER = 1;
+    
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -210,7 +212,7 @@ public class ProductOrder extends AppCompatActivity implements LoaderManager.Loa
 
             int totalPrice = (int) (localQuantity * productPrice);
 
-            int newValue = productQuantity - localQuantity;
+            newValue = productQuantity - localQuantity;
 
             if (newValue < 0) {
 
@@ -226,7 +228,11 @@ public class ProductOrder extends AppCompatActivity implements LoaderManager.Loa
                 public void onClick(View v) {
                     ContentValues values = new ContentValues();
                     values.put(InventoryEntrys.PRODUCT_QUANTITY, finalNewValue);
-
+                   if (newValue > 0) {
+                       Toast.makeText(ProductOrder.this, "Product Have Been purchase, Thank you for you business.", Toast.LENGTH_SHORT).show();
+                   } else {
+                       Toast.makeText(ProductOrder.this, "Quantity require for purchase is at least 1", Toast.LENGTH_SHORT).show();
+                   }
                     getContentResolver().update(mCurrentUri, values, null, null);
                     finish();
                 }

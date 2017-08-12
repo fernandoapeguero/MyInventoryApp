@@ -57,6 +57,7 @@
             android:paddingLeft="4dp">
 
             <EditText
+                
                 android:id="@+id/product_quantity_editfield"
                 style="@style/add_product_edit_text_style"
                 android:hint="@string/quantity"
