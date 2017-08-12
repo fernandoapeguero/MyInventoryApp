@@ -34,7 +34,7 @@
                 android:id="@+id/product_price_editfield"
                 style="@style/add_product_edit_text_style"
                 android:hint="@string/price"
-                android:inputType="number" />
+                android:inputType="numberDecimal" />
         </LinearLayout>
 
 

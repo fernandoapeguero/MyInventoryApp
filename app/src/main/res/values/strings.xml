@@ -18,4 +18,6 @@
     <string name="quantity_textview">Quantity :&#160;</string>
     <string name="weight_textview">Weight :&#160;</string>
     <string name="kg">kg</string>
+    <string name="order_summary">Order Summary</string>
+    <string name="order_now">Order Now</string>
 </resources>

@@ -27,7 +27,11 @@
             android:authorities="com.inventoryprovider"
             android:exported="false" />
 
-        <activity android:name=".ProductOrder"></activity>
+        <activity
+            android:label="Product Order"
+            android:parentActivityName=".ProductActivity"
+            android:name=".ProductOrder"
+            tools:targetApi="jelly_bean" />
     </application>
 
 </manifest>

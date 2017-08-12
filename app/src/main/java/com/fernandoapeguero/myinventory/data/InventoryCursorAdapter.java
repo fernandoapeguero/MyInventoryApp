@@ -20,8 +20,6 @@ import butterknife.ButterKnife;
 
 public class InventoryCursorAdapter extends CursorAdapter {
 
-
-
     public InventoryCursorAdapter(Context context, Cursor cursor) {
         super(context, cursor, 0);
     }

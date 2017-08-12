@@ -35,10 +35,10 @@ public class InventoryProvider extends ContentProvider {
     }
 
     static {
-          // SETTING THE URI FOR ALL PRODUCTS AND ADDING IT TO THE URIMATCHER
-        sUriMatcher.addURI(InventoryContract.CONTENT_AUTHORITY, InventoryContract.PATH_INVENTORY,PRODUCT);
+        // SETTING THE URI FOR ALL PRODUCTS AND ADDING IT TO THE URIMATCHER
+        sUriMatcher.addURI(InventoryContract.CONTENT_AUTHORITY, InventoryContract.PATH_INVENTORY, PRODUCT);
 
-        sUriMatcher.addURI(InventoryContract.CONTENT_AUTHORITY, InventoryContract.PATH_INVENTORY + "/#" , PRODUCT_ID);
+        sUriMatcher.addURI(InventoryContract.CONTENT_AUTHORITY, InventoryContract.PATH_INVENTORY + "/#", PRODUCT_ID);
 
     }
 
@@ -51,24 +51,24 @@ public class InventoryProvider extends ContentProvider {
         Cursor cursor = null;
 
         int match = sUriMatcher.match(uri);
-        switch (match){
+        switch (match) {
             case PRODUCT:
 
-               cursor = db.query(InventoryEntrys.TABLE_NAME,projection,selection,selectionArgs,null,null,sortOrder);
+                cursor = db.query(InventoryEntrys.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case PRODUCT_ID:
 
                 selection = InventoryEntrys._ID + " = ?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
 
-                cursor = db.query(InventoryEntrys.TABLE_NAME,projection,selection,selectionArgs,null,null,sortOrder);
+                cursor = db.query(InventoryEntrys.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             default:
-               throw  new IllegalArgumentException("Cursor can't query unknow uri" + uri);
+                throw new IllegalArgumentException("Cursor can't query unknow uri" + uri);
 
         }
 
-        cursor.setNotificationUri(getContext().getContentResolver(),uri);
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
     }
 
@@ -78,9 +78,9 @@ public class InventoryProvider extends ContentProvider {
 
         int match = sUriMatcher.match(uri);
 
-        switch (match){
+        switch (match) {
             case PRODUCT:
-               return InventoryEntrys.CONTENT_LIST_TYPE;
+                return InventoryEntrys.CONTENT_LIST_TYPE;
             case PRODUCT_ID:
                 return InventoryEntrys.CONTENT_ITEM_TYPE;
             default:
@@ -95,33 +95,31 @@ public class InventoryProvider extends ContentProvider {
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
 
         int match = sUriMatcher.match(uri);
-        switch (match){
+        switch (match) {
             case PRODUCT:
                 // insert method for inserting the values into the database
-                saveInventory(uri,values);
+                saveInventory(uri, values);
                 break;
             default:
                 throw new IllegalArgumentException("insertion is not supported for " + uri);
         }
-   getContext().getContentResolver().notifyChange(uri,null);
+        getContext().getContentResolver().notifyChange(uri, null);
         return null;
     }
 
-    private Uri saveInventory(Uri uri,ContentValues values){
-
-
+    private Uri saveInventory(Uri uri, ContentValues values) {
 
         SQLiteDatabase db = iDbHelper.getWritableDatabase();
 
-       long id =  db.insert(InventoryEntrys.TABLE_NAME,null,values);
+        long id = db.insert(InventoryEntrys.TABLE_NAME, null, values);
 
-         if (id == -1 ){
+        if (id == -1) {
 
-             Log.e(LOG_TAG, "failed to insert row for " + uri);
-         }
+            Log.e(LOG_TAG, "failed to insert row for " + uri);
+        }
 
-         getContext().getContentResolver().notifyChange(uri,null);
-     return ContentUris.withAppendedId(uri,id);
+        getContext().getContentResolver().notifyChange(uri, null);
+        return ContentUris.withAppendedId(uri, id);
     }
 
     @Override
@@ -134,23 +132,23 @@ public class InventoryProvider extends ContentProvider {
 
         int match = sUriMatcher.match(uri);
 
-        switch (match){
+        switch (match) {
             case PRODUCT:
 
-               deletedRows = db.delete(InventoryEntrys.TABLE_NAME,selection,selectionArgs);
+                deletedRows = db.delete(InventoryEntrys.TABLE_NAME, selection, selectionArgs);
                 break;
             case PRODUCT_ID:
 
                 selection = InventoryEntrys._ID + " = ?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
 
-                deletedRows = db.delete(InventoryEntrys.TABLE_NAME,selection,selectionArgs);
-               break;
-                default:
-                    throw new IllegalArgumentException("can not match uri " + uri);
+                deletedRows = db.delete(InventoryEntrys.TABLE_NAME, selection, selectionArgs);
+                break;
+            default:
+                throw new IllegalArgumentException("can not match uri " + uri);
         }
 
-  getContext().getContentResolver().notifyChange(uri,null);
+        getContext().getContentResolver().notifyChange(uri, null);
 
         return deletedRows;
     }
@@ -160,15 +158,14 @@ public class InventoryProvider extends ContentProvider {
 
         SQLiteDatabase db = iDbHelper.getWritableDatabase();
 
-       int updatedRows =  db.update(InventoryEntrys.TABLE_NAME,values,selection,selectionArgs);
+        int updatedRows = db.update(InventoryEntrys.TABLE_NAME, values, selection, selectionArgs);
 
-        if (updatedRows != 0){
+        if (updatedRows != 0) {
 
-            db.update(InventoryEntrys.TABLE_NAME,values,selection,selectionArgs);
+            db.update(InventoryEntrys.TABLE_NAME, values, selection, selectionArgs);
 
-            getContext().getContentResolver().notifyChange(uri,null);
+            getContext().getContentResolver().notifyChange(uri, null);
         }
-
 
         return updatedRows;
     }
