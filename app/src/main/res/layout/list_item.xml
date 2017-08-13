@@ -39,7 +39,7 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="2.5"
+        android:layout_weight="2"
         android:orientation="vertical"
         android:paddingTop="8dp">
 
@@ -70,6 +70,7 @@
     <Button
         android:id="@+id/sale_button"
         android:text="@string/sale"
+        android:focusable="false"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="70dp"
         android:layout_height="match_parent"

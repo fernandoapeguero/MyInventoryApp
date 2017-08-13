@@ -99,8 +99,10 @@ public class AddAProduct extends AppCompatActivity implements LoaderManager.Load
     String productQuantity = editProductQuantity.getText().toString().trim();
     String productWeight = editProductWeight.getText().toString().trim();
 
-    if (mCurrentUri == null && TextUtils.isEmpty(productName) && TextUtils.isEmpty(productPrice) &&
-            TextUtils.isEmpty(productQuantity) && TextUtils.isEmpty(productWeight)){return;}
+    if (mCurrentUri == null && TextUtils.isEmpty(productName) || TextUtils.isEmpty(productPrice) ||
+            TextUtils.isEmpty(productQuantity) || TextUtils.isEmpty(productWeight)){
+        Toast.makeText(this, "fill all of the field before adding product", Toast.LENGTH_SHORT).show();
+        return;}
 
    double price = 0 ;
     int quantity = 0 ;

@@ -1,6 +1,5 @@
 package com.fernandoapeguero.myinventory;
 
-import android.app.Dialog;
 import android.app.LoaderManager;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -25,9 +24,6 @@ import android.widget.TextView;
 import com.fernandoapeguero.myinventory.data.InventoryContract.InventoryEntrys;
 import com.fernandoapeguero.myinventory.data.InventoryCursorAdapter;
 
-import java.util.EmptyStackException;
-
-import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -89,9 +85,9 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
 
         ContentValues values = new ContentValues();
         values.put(InventoryEntrys.PRODUCT_NAME, " cheese cake  ");
-        values.put(InventoryEntrys.PRODUCT_PRICE,   12);
-        values.put(InventoryEntrys.PRODUCT_QUANTITY , 20);
-        values.put(InventoryEntrys.PRODUCT_WEIGHT, 3);
+        values.put(InventoryEntrys.PRODUCT_PRICE,   "12");
+        values.put(InventoryEntrys.PRODUCT_QUANTITY , "20");
+        values.put(InventoryEntrys.PRODUCT_WEIGHT, "3");
 
         Uri newUri = getContentResolver().insert(InventoryEntrys.CONTENT_URI,values);
 

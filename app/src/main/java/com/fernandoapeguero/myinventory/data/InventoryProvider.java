@@ -156,6 +156,10 @@ public class InventoryProvider extends ContentProvider {
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
 
+        if (values.size() == 0 ){
+            return 0;
+        }
+
         SQLiteDatabase db = iDbHelper.getWritableDatabase();
 
         int updatedRows = db.update(InventoryEntrys.TABLE_NAME, values, selection, selectionArgs);
