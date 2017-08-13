@@ -161,17 +161,10 @@ public class ProductOrder extends AppCompatActivity implements LoaderManager.Loa
             public void onClick(View v) {
 
                 myOrderQuantity += 1;
-                if (myOrderQuantity > productQuantity) {
 
-                    myOrderQuantity = productQuantity;
-
-                } else if (productQuantity == 0) {
-                    myOrderQuantity = 0;
-                    liveQuantityTextview.setText("" + myOrderQuantity);
-                } else {
                     liveQuantityTextview.setText("" + myOrderQuantity);
                     updateInformation(myOrderQuantity);
-                }
+
             }
         });
 
@@ -199,13 +192,11 @@ public class ProductOrder extends AppCompatActivity implements LoaderManager.Loa
 
         final int productQuantity = Integer.parseInt(quantityOrder.getText().toString().trim());
 
-        if (localQuantity <= productQuantity) {
-
             int totalWeight = localQuantity * productWeight;
 
             int totalPrice = (int) (localQuantity * productPrice);
 
-            newValue = productQuantity - localQuantity;
+            newValue = productQuantity + localQuantity;
 
             if (newValue < 0) {
 
@@ -231,7 +222,7 @@ public class ProductOrder extends AppCompatActivity implements LoaderManager.Loa
                 }
             });
 
-        }
+
 
     }
 

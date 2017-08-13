@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.fernandoapeguero.myinventory.data.InventoryContract.InventoryEntrys;
 
@@ -156,21 +157,51 @@ public class InventoryProvider extends ContentProvider {
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
 
+        int match = sUriMatcher.match(uri);
+        switch (match){
+            case PRODUCT:
+
+                return updateProduct(uri,values,selection,selectionArgs);
+
+            case PRODUCT_ID:
+                selection = InventoryEntrys._ID + " = ? ";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+
+              return   updateProduct(uri,values,selection,selectionArgs);
+
+                default:
+                    throw new IllegalArgumentException("Update is not supported for \" + uri");
+
+        }
+
+    }
+
+    private int updateProduct(Uri uri , ContentValues values, String selection , String[] selectionArgs){
+        
+        if (values.containsKey(InventoryEntrys.PRODUCT_NAME)){
+            String name = values.getAsString(InventoryEntrys.PRODUCT_NAME);
+            if (name == null){
+                throw new IllegalArgumentException("Product require a name");
+                
+            }
+            
+        }
+
+
         if (values.size() == 0 ){
             return 0;
         }
 
         SQLiteDatabase db = iDbHelper.getWritableDatabase();
 
-        int updatedRows = db.update(InventoryEntrys.TABLE_NAME, values, selection, selectionArgs);
+     int rowsUpdated =   db.update(InventoryEntrys.TABLE_NAME,values,selection,selectionArgs);
 
-        if (updatedRows != 0) {
 
-            db.update(InventoryEntrys.TABLE_NAME, values, selection, selectionArgs);
+    if (rowsUpdated != 0 ){
 
-            getContext().getContentResolver().notifyChange(uri, null);
-        }
+        getContext().getContentResolver().notifyChange(uri,null);
+    }
 
-        return updatedRows;
+    return rowsUpdated;
     }
 }

@@ -8,6 +8,20 @@
     android:padding="16dp"
     tools:context="com.fernandoapeguero.myinventory.AddAProduct">
 
+    <ImageView
+        android:id="@+id/add_image"
+        android:layout_gravity="center"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginBottom="36dp"
+        android:background="@drawable/plus_icon_black" />
+
+    <TextView
+        android:id="@+id/image_String_uri"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

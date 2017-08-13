@@ -1,22 +1,37 @@
 package com.fernandoapeguero.myinventory;
 
+import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.TextureView;
+import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fernandoapeguero.myinventory.data.InventoryContract.InventoryEntrys;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,11 +46,22 @@ public class AddAProduct extends AppCompatActivity implements LoaderManager.Load
     @BindView(R.id.product_price_editfield) EditText editProductPrice;
     @BindView(R.id.product_quantity_editfield) EditText editProductQuantity;
     @BindView(R.id.product_weight_editfield) EditText editProductWeight;
+    @BindView(R.id.image_String_uri)
+    TextView mTextView;
+    @BindView(R.id.add_image) ImageView mImageView;
 
 
     private Uri mCurrentUri;
 
     private static final int EDIT_INIT_LOADER = 0 ;
+    private String imageAddress;
+
+    private static final String STATE_URI = "STATE_URI";
+
+    private static final int PICK_IMAGE_REQUEST = 1;
+    private static final String LOG_TAG = AddAProduct.class.getName();
+
+    private Uri imageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +84,13 @@ public class AddAProduct extends AppCompatActivity implements LoaderManager.Load
 
             getLoaderManager().initLoader(EDIT_INIT_LOADER,null,this);
         }
+
+        mImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openImageSelector();
+            }
+        });
     }
 
     @Override
@@ -128,6 +161,7 @@ public class AddAProduct extends AppCompatActivity implements LoaderManager.Load
     values.put(InventoryEntrys.PRODUCT_PRICE, price);
     values.put(InventoryEntrys.PRODUCT_QUANTITY, quantity);
     values.put(InventoryEntrys.PRODUCT_WEIGHT, weight);
+        values.put(InventoryEntrys.PRODUCT_IMAGE, imageAddress);
 
  if (mCurrentUri == null){
      getContentResolver().insert(InventoryEntrys.CONTENT_URI,values);
@@ -201,14 +235,17 @@ public class AddAProduct extends AppCompatActivity implements LoaderManager.Load
             int priceColumnIndex = cursor.getColumnIndex(InventoryEntrys.PRODUCT_PRICE);
             int quantityColumnIndex = cursor.getColumnIndex(InventoryEntrys.PRODUCT_QUANTITY);
             int weightColumnIndex = cursor.getColumnIndex(InventoryEntrys.PRODUCT_WEIGHT);
+            int imageColumIndex = cursor.getColumnIndex(InventoryEntrys.PRODUCT_IMAGE);
 
 
             String productName = cursor.getString(nameColumnIndex);
+            String productImage = cursor.getString(imageColumIndex);
             int productPrice = cursor.getInt(priceColumnIndex);
             int productQuantity = cursor.getInt(quantityColumnIndex);
             int productWeight = cursor.getInt(weightColumnIndex);
 
-
+              Uri uri = Uri.parse(productImage);
+             mImageView.setImageBitmap(getBitmapFromUri(uri));
             editProductName.setText(productName);
             editProductPrice.setText(Integer.toString(productPrice));
             editProductQuantity.setText(Integer.toString(productQuantity));
@@ -225,5 +262,115 @@ public class AddAProduct extends AppCompatActivity implements LoaderManager.Load
         editProductQuantity.setText("");
         editProductWeight.setText("");
 
+    }
+
+    public void openImageSelector() {
+        Intent intent;
+
+        if (Build.VERSION.SDK_INT < 19) {
+            intent = new Intent(Intent.ACTION_GET_CONTENT);
+        } else {
+            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+        }
+
+        intent.setType("image/*");
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        if (savedInstanceState.containsKey(STATE_URI) &&
+                !savedInstanceState.getString(STATE_URI).equals("")) {
+            imageUri = Uri.parse(savedInstanceState.getString(STATE_URI));
+            mTextView.setText(imageUri.toString());
+
+            ViewTreeObserver viewTreeObserver = mImageView.getViewTreeObserver();
+            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+                @Override
+                public void onGlobalLayout() {
+                    mImageView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    mImageView.setImageBitmap(getBitmapFromUri(imageUri));
+                }
+            });
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+        // The ACTION_OPEN_DOCUMENT intent was sent with the request code READ_REQUEST_CODE.
+        // If the request code seen here doesn't match, it's the response to some other intent,
+        // and the below code shouldn't run at all.
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
+            // The document selected by the user won't be returned in the intent.
+            // Instead, a URI to that document will be contained in the return intent
+            // provided to this method as a parameter.  Pull that uri using "resultData.getData()"
+
+            if (resultData != null) {
+                imageUri = resultData.getData();
+                Log.i(LOG_TAG, "Uri: " + imageUri.toString());
+
+                mTextView.setText(imageUri.toString());
+                imageAddress = imageUri.toString();
+                mImageView.setImageBitmap(getBitmapFromUri(imageUri));
+            }
+        }
+//        else if (requestCode == SEND_MAIL_REQUEST && resultCode == Activity.RESULT_OK) {
+//
+//        }
+    }
+
+    public Bitmap getBitmapFromUri(Uri uri) {
+
+        if (uri == null || uri.toString().isEmpty())
+            return null;
+
+        // Get the dimensions of the View
+        int targetW = mImageView.getWidth();
+        int targetH = mImageView.getHeight();
+
+        InputStream input = null;
+        try {
+            input = this.getContentResolver().openInputStream(uri);
+
+            // Get the dimensions of the bitmap
+            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+            bmOptions.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(input, null, bmOptions);
+            input.close();
+
+            int photoW = bmOptions.outWidth;
+            int photoH = bmOptions.outHeight;
+
+            // Determine how much to scale down the image
+            int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+
+            // Decode the image file into a Bitmap sized to fill the View
+            bmOptions.inJustDecodeBounds = false;
+            bmOptions.inSampleSize = scaleFactor;
+            bmOptions.inPurgeable = true;
+
+            input = this.getContentResolver().openInputStream(uri);
+            Bitmap bitmap = BitmapFactory.decodeStream(input, null, bmOptions);
+            input.close();
+            return bitmap;
+
+        } catch (FileNotFoundException fne) {
+            Log.e(LOG_TAG, "Failed to load image.", fne);
+            return null;
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Failed to load image.", e);
+            return null;
+        } finally {
+            try {
+                input.close();
+            } catch (IOException ioe) {
+
+            }
+        }
     }
 }

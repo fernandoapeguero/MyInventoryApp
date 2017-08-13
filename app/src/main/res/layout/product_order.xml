@@ -149,7 +149,7 @@
                     android:id="@+id/summarize_order"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    android:textSize="24sp" />
+                    android:textSize="28sp" />
 
 
             </LinearLayout>
