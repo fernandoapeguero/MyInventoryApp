@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CursorAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +27,7 @@ import butterknife.ButterKnife;
  */
 
 public class InventoryCursorAdapter extends CursorAdapter {
+
 
     public InventoryCursorAdapter(Context context, Cursor cursor) {
         super(context, cursor, 0);
@@ -73,6 +75,7 @@ public class InventoryCursorAdapter extends CursorAdapter {
             }
         });
 
+
         holder.product.setText(productName);
         holder.price.setText(productPrice);
         holder.quantity.setText(productQuantity);
@@ -85,6 +88,8 @@ public class InventoryCursorAdapter extends CursorAdapter {
         @BindView(R.id.product_quantity_textView) TextView quantity;
         @BindView(R.id.sale_button)
         Button saleButton;
+        @BindView(R.id.icon_image)
+        ImageView iconImage;
 
         public ViewHolder(View view){
             ButterKnife.bind(this,view);

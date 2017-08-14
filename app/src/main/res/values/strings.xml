@@ -25,5 +25,6 @@
 
     <string name="delete_dialog">Delete</string>
     <string name="cancel">Cancel</string>
+    <string name="unsaved_changes">Discard your changes and quit editing?</string>
 
 </resources>

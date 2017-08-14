@@ -54,7 +54,7 @@ public class ProductOrder extends AppCompatActivity implements LoaderManager.Loa
     private Uri mCurrentUri;
 
     private static final int ORDER_PRODUCT_LOADER = 1;
-    
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,8 +162,8 @@ public class ProductOrder extends AppCompatActivity implements LoaderManager.Loa
 
                 myOrderQuantity += 1;
 
-                    liveQuantityTextview.setText("" + myOrderQuantity);
-                    updateInformation(myOrderQuantity);
+                liveQuantityTextview.setText("" + myOrderQuantity);
+                updateInformation(myOrderQuantity);
 
             }
         });
@@ -192,36 +192,47 @@ public class ProductOrder extends AppCompatActivity implements LoaderManager.Loa
 
         final int productQuantity = Integer.parseInt(quantityOrder.getText().toString().trim());
 
-            int totalWeight = localQuantity * productWeight;
+        int totalWeight = localQuantity * productWeight;
 
-            int totalPrice = (int) (localQuantity * productPrice);
+        int totalPrice = (int) (localQuantity * productPrice);
 
-            newValue = productQuantity + localQuantity;
+        newValue = productQuantity + localQuantity;
 
-            if (newValue < 0) {
+        if (newValue < 0) {
 
-                newValue = 0;
-            }
-            orderNow.setVisibility(View.VISIBLE);
+            newValue = 0;
+        }
+        orderNow.setVisibility(View.VISIBLE);
 
-            summarize_textview.setText("Product : " + nameOrder.getText() + "\n" + "Quantity Order : " + localQuantity + "\n" + "Order Total : $" + totalPrice + "\n" + "Order Weight : " + totalWeight);
+        summarize_textview.setText("Product : " + nameOrder.getText() + "\n" + "Quantity Order : " + localQuantity + "\n" + "Order Total : $" + totalPrice + "\n" + "Order Weight : " + totalWeight);
 
-            final int finalNewValue = newValue;
-            orderNow.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ContentValues values = new ContentValues();
-                    values.put(InventoryEntrys.PRODUCT_QUANTITY, finalNewValue);
-                   if (newValue > 0) {
-                       Toast.makeText(ProductOrder.this, "Product Have Been purchase, Thank you for you business.", Toast.LENGTH_SHORT).show();
-                   } else {
-                       Toast.makeText(ProductOrder.this, "Quantity require for purchase is at least 1", Toast.LENGTH_SHORT).show();
-                   }
-                    getContentResolver().update(mCurrentUri, values, null, null);
-                    finish();
+        final int finalNewValue = newValue;
+        orderNow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ContentValues values = new ContentValues();
+                values.put(InventoryEntrys.PRODUCT_QUANTITY, finalNewValue);
+                if (finalNewValue > 0) {
+                    Toast.makeText(ProductOrder.this, "Product Have Been purchase, Thank you for you business.", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    Toast.makeText(ProductOrder.this, "Quantity require for purchase is at least 1", Toast.LENGTH_SHORT).show();
                 }
-            });
+                getContentResolver().update(mCurrentUri, values, null, null);
 
+                Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                emailIntent.setData(Uri.parse("mailto:"));
+                emailIntent.setType("text/html");
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Order  more " + nameOrder.getText() + " Product");
+                emailIntent.putExtra(Intent.EXTRA_TEXT, summarize_textview.getText().toString());
+
+                if (emailIntent.resolveActivity(getPackageManager()) != null) {
+
+                    startActivity(emailIntent);
+                }
+                finish();
+            }
+        });
 
 
     }

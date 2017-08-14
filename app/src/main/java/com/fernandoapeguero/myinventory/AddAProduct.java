@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -13,13 +14,15 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.TextureView;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.EditText;
@@ -38,29 +41,34 @@ import butterknife.ButterKnife;
 
 import static java.lang.Integer.parseInt;
 
-public class AddAProduct extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+public class AddAProduct extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
 
-    @BindView(R.id.product_name_editfield)
-    EditText editProductName;
-    @BindView(R.id.product_price_editfield) EditText editProductPrice;
-    @BindView(R.id.product_quantity_editfield) EditText editProductQuantity;
-    @BindView(R.id.product_weight_editfield) EditText editProductWeight;
-    @BindView(R.id.image_String_uri)
-    TextView mTextView;
-    @BindView(R.id.add_image) ImageView mImageView;
-
-
-    private Uri mCurrentUri;
-
-    private static final int EDIT_INIT_LOADER = 0 ;
-    private String imageAddress;
-
+    private static final int EDIT_INIT_LOADER = 0;
     private static final String STATE_URI = "STATE_URI";
-
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final String LOG_TAG = AddAProduct.class.getName();
-
+    @BindView(R.id.product_name_editfield)
+    EditText editProductName;
+    @BindView(R.id.product_price_editfield)
+    EditText editProductPrice;
+    @BindView(R.id.product_quantity_editfield)
+    EditText editProductQuantity;
+    @BindView(R.id.product_weight_editfield)
+    EditText editProductWeight;
+    @BindView(R.id.image_String_uri)
+    TextView mTextView;
+    @BindView(R.id.add_image)
+    ImageView mImageView;
+    private Uri mCurrentUri;
+    private boolean hasProductChange = false;
+    public View.OnTouchListener mTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            hasProductChange = true;
+            return false;
+        }
+    };
     private Uri imageUri;
 
     @Override
@@ -74,7 +82,7 @@ public class AddAProduct extends AppCompatActivity implements LoaderManager.Load
 
         mCurrentUri = intent.getData();
 
-        if (mCurrentUri == null){
+        if (mCurrentUri == null) {
 
             setTitle("Add a Product");
 
@@ -82,8 +90,13 @@ public class AddAProduct extends AppCompatActivity implements LoaderManager.Load
         } else {
             setTitle("Edit a Product");
 
-            getLoaderManager().initLoader(EDIT_INIT_LOADER,null,this);
+            getLoaderManager().initLoader(EDIT_INIT_LOADER, null, this);
         }
+
+        editProductName.setOnTouchListener(mTouchListener);
+        editProductQuantity.setOnTouchListener(mTouchListener);
+        editProductWeight.setOnTouchListener(mTouchListener);
+        editProductPrice.setOnTouchListener(mTouchListener);
 
         mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,17 +115,60 @@ public class AddAProduct extends AppCompatActivity implements LoaderManager.Load
         return true;
     }
 
+    private void deleteThisPetDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Delete this Product?");
+        builder.setPositiveButton(R.string.delete_dialog, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deleteProduct();
+                finish();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        AlertDialog alertIt = builder.create();
+        alertIt.show();
+    }
+
+    private void showUnsavedChanges(DialogInterface.OnClickListener diascardChanges) {
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.unsaved_changes);
+        builder.setPositiveButton("Discard", diascardChanges);
+
+        builder.setNegativeButton("Keep Editing", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        AlertDialog alertIt = builder.create();
+        alertIt.show();
+
+    }
+
     /**
      * delete a single item out of the table
      */
 
-    private void deleteProduct(){
+    private void deleteProduct() {
 
-        if (mCurrentUri != null){
+        if (mCurrentUri != null) {
 
-         int rowDeleted  =   getContentResolver().delete(mCurrentUri,null,null);
+            int rowDeleted = getContentResolver().delete(mCurrentUri, null, null);
 
-            if (rowDeleted == 0){
+            if (rowDeleted == 0) {
 
                 Toast.makeText(this, "Error deleting product", Toast.LENGTH_SHORT).show();
             } else {
@@ -125,59 +181,63 @@ public class AddAProduct extends AppCompatActivity implements LoaderManager.Load
     /**
      * save information for the new product in the table
      */
-    private void saveProduct(){
+    private void saveProduct() {
 
-    String productName = editProductName.getText().toString().trim();
-    String productPrice = editProductPrice.getText().toString().trim();
-    String productQuantity = editProductQuantity.getText().toString().trim();
-    String productWeight = editProductWeight.getText().toString().trim();
+        String productName = editProductName.getText().toString().trim();
+        String productPrice = editProductPrice.getText().toString().trim();
+        String productQuantity = editProductQuantity.getText().toString().trim();
+        String productWeight = editProductWeight.getText().toString().trim();
 
-    if (mCurrentUri == null && TextUtils.isEmpty(productName) || TextUtils.isEmpty(productPrice) ||
-            TextUtils.isEmpty(productQuantity) || TextUtils.isEmpty(productWeight)){
-        Toast.makeText(this, "fill all of the field before adding product", Toast.LENGTH_SHORT).show();
-        return;}
+        String textString = mTextView.getText().toString().trim();
 
-   double price = 0 ;
-    int quantity = 0 ;
-    int weight = 0 ;
+        if (mCurrentUri == null && TextUtils.isEmpty(productName) || TextUtils.isEmpty(productPrice) ||
+                TextUtils.isEmpty(productQuantity) || TextUtils.isEmpty(productWeight) || TextUtils.isEmpty(textString)) {
+            Toast.makeText(this, "fill all of the field before adding product", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
- if (!TextUtils.isEmpty(productPrice)){
-       price =  Double.parseDouble(productPrice);
- }
+        double price = 0;
+        int quantity = 0;
+        int weight = 0;
 
- if (!TextUtils.isEmpty(productQuantity)){
+        if (!TextUtils.isEmpty(productPrice)) {
+            price = Double.parseDouble(productPrice);
+        }
 
-     quantity = parseInt(productQuantity);
- }
+        if (!TextUtils.isEmpty(productQuantity)) {
 
- if (!TextUtils.isEmpty(productWeight)){
+            quantity = parseInt(productQuantity);
+        }
 
-     weight = parseInt(productWeight);
+        if (!TextUtils.isEmpty(productWeight)) {
 
- }
+            weight = parseInt(productWeight);
 
-    ContentValues values = new ContentValues();
-    values.put(InventoryEntrys.PRODUCT_NAME , productName);
-    values.put(InventoryEntrys.PRODUCT_PRICE, price);
-    values.put(InventoryEntrys.PRODUCT_QUANTITY, quantity);
-    values.put(InventoryEntrys.PRODUCT_WEIGHT, weight);
-        values.put(InventoryEntrys.PRODUCT_IMAGE, imageAddress);
+        }
 
- if (mCurrentUri == null){
-     getContentResolver().insert(InventoryEntrys.CONTENT_URI,values);
+        ContentValues values = new ContentValues();
+        values.put(InventoryEntrys.PRODUCT_IMAGE, textString);
+        values.put(InventoryEntrys.PRODUCT_NAME, productName);
+        values.put(InventoryEntrys.PRODUCT_PRICE, price);
+        values.put(InventoryEntrys.PRODUCT_QUANTITY, quantity);
+        values.put(InventoryEntrys.PRODUCT_WEIGHT, weight);
 
- } else {
 
-     getContentResolver().update(mCurrentUri,values,null,null);
- }
+        if (mCurrentUri == null) {
+            getContentResolver().insert(InventoryEntrys.CONTENT_URI, values);
 
-}
+        } else {
+
+            getContentResolver().update(mCurrentUri, values, null, null);
+        }
+
+    }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
-        if (mCurrentUri == null){
+        if (mCurrentUri == null) {
 
             MenuItem menuItem = menu.findItem(R.id.delete_product);
             menuItem.setVisible(false);
@@ -187,9 +247,27 @@ public class AddAProduct extends AppCompatActivity implements LoaderManager.Load
     }
 
     @Override
+    public void onBackPressed() {
+
+        if (!hasProductChange) {
+            super.onBackPressed();
+            return;
+        }
+
+        DialogInterface.OnClickListener discardChanges = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        };
+
+        showUnsavedChanges(discardChanges);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
 
             case R.id.im_done:
                 saveProduct();
@@ -197,14 +275,30 @@ public class AddAProduct extends AppCompatActivity implements LoaderManager.Load
                 // write the logic to save the inventory data for the product
                 return true;
             case R.id.delete_product:
-                deleteProduct();
-                finish();
+                deleteThisPetDialog();
                 // write logic to deleted specific product from the inventory
                 return true;
-            default:
+            case android.R.id.home:
 
-                return super.onOptionsItemSelected(item);
+                if (!hasProductChange) {
+                    NavUtils.navigateUpFromSameTask(this);
+                    return true;
+
+                }
+
+                DialogInterface.OnClickListener discardChanges = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        NavUtils.navigateUpFromSameTask(AddAProduct.this);
+
+                    }
+                };
+
+                showUnsavedChanges(discardChanges);
+                return true;
+
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -213,23 +307,24 @@ public class AddAProduct extends AppCompatActivity implements LoaderManager.Load
         String[] projection = {
                 InventoryEntrys._ID,
                 InventoryEntrys.PRODUCT_NAME,
+                InventoryEntrys.PRODUCT_IMAGE,
                 InventoryEntrys.PRODUCT_PRICE,
                 InventoryEntrys.PRODUCT_QUANTITY,
                 InventoryEntrys.PRODUCT_WEIGHT
         };
 
-        return new CursorLoader(this,mCurrentUri,projection,null,null,null);
+        return new CursorLoader(this, mCurrentUri, projection, null, null, null);
 
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 
-        if (cursor == null || cursor.getCount() < 1){
+        if (cursor == null || cursor.getCount() < 1) {
             return;
         }
 
-        if (cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
 
             int nameColumnIndex = cursor.getColumnIndex(InventoryEntrys.PRODUCT_NAME);
             int priceColumnIndex = cursor.getColumnIndex(InventoryEntrys.PRODUCT_PRICE);
@@ -244,8 +339,11 @@ public class AddAProduct extends AppCompatActivity implements LoaderManager.Load
             int productQuantity = cursor.getInt(quantityColumnIndex);
             int productWeight = cursor.getInt(weightColumnIndex);
 
-              Uri uri = Uri.parse(productImage);
-             mImageView.setImageBitmap(getBitmapFromUri(uri));
+            if (!TextUtils.isEmpty(productImage)) {
+                mTextView.setText(productImage);
+                Uri uri = Uri.parse(productImage);
+                mImageView.setImageBitmap(getBitmapFromUri(uri));
+            }
             editProductName.setText(productName);
             editProductPrice.setText(Integer.toString(productPrice));
             editProductQuantity.setText(Integer.toString(productQuantity));
@@ -315,7 +413,6 @@ public class AddAProduct extends AppCompatActivity implements LoaderManager.Load
                 Log.i(LOG_TAG, "Uri: " + imageUri.toString());
 
                 mTextView.setText(imageUri.toString());
-                imageAddress = imageUri.toString();
                 mImageView.setImageBitmap(getBitmapFromUri(imageUri));
             }
         }
