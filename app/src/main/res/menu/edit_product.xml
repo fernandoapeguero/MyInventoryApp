@@ -8,4 +8,11 @@
         android:id="@+id/edi_product_onmenu"
         />
 
+    <item
+        android:title="Done"
+        android:icon="@drawable/ic_done"
+        app:showAsAction="ifRoom"
+        android:id="@+id/im_save_decrease"
+        />
+
 </menu>

@@ -225,10 +225,12 @@ public class AddAProduct extends AppCompatActivity implements LoaderManager.Load
 
         if (mCurrentUri == null) {
             getContentResolver().insert(InventoryEntrys.CONTENT_URI, values);
+            finish();
 
         } else {
 
             getContentResolver().update(mCurrentUri, values, null, null);
+            finish();
         }
 
     }
@@ -271,7 +273,6 @@ public class AddAProduct extends AppCompatActivity implements LoaderManager.Load
 
             case R.id.im_done:
                 saveProduct();
-                finish();
                 // write the logic to save the inventory data for the product
                 return true;
             case R.id.delete_product:
@@ -416,9 +417,6 @@ public class AddAProduct extends AppCompatActivity implements LoaderManager.Load
                 mImageView.setImageBitmap(getBitmapFromUri(imageUri));
             }
         }
-//        else if (requestCode == SEND_MAIL_REQUEST && resultCode == Activity.RESULT_OK) {
-//
-//        }
     }
 
     public Bitmap getBitmapFromUri(Uri uri) {

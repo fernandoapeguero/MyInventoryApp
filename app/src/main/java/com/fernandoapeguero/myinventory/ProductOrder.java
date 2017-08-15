@@ -24,6 +24,7 @@ import butterknife.ButterKnife;
 
 public class ProductOrder extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final int ORDER_PRODUCT_LOADER = 1;
     @BindView(R.id.product_name_order)
     TextView nameOrder;
     @BindView(R.id.quantity_order_textview)
@@ -32,29 +33,21 @@ public class ProductOrder extends AppCompatActivity implements LoaderManager.Loa
     TextView priceOrder;
     @BindView(R.id.weight_order_textview)
     TextView weightOrder;
-
     @BindView(R.id.summarize_order)
     TextView summarize_textview;
     @BindView(R.id.order_now)
     Button orderNow;
-
     @BindView(R.id.minus_button)
     Button minusButton;
     @BindView(R.id.plus_button)
     Button plusButton;
     @BindView(R.id.quantity_live_textview)
     TextView liveQuantityTextview;
-
     private int productQuantity;
     private double productPrice;
     private int productWeight;
     private int myOrderQuantity = 0;
-    private int newValue = 0;
-
     private Uri mCurrentUri;
-
-    private static final int ORDER_PRODUCT_LOADER = 1;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +66,6 @@ public class ProductOrder extends AppCompatActivity implements LoaderManager.Loa
         buyProduct();
 
         orderNow.setVisibility(View.GONE);
-
 
     }
 
@@ -122,6 +114,7 @@ public class ProductOrder extends AppCompatActivity implements LoaderManager.Loa
 
         return new CursorLoader(this, mCurrentUri, projection, null, null, null);
     }
+
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
@@ -175,28 +168,43 @@ public class ProductOrder extends AppCompatActivity implements LoaderManager.Loa
                 if (myOrderQuantity < 0) {
 
                     myOrderQuantity = 0;
-
-                } else if (productQuantity == 0) {
-                    myOrderQuantity = 0;
                     liveQuantityTextview.setText("" + myOrderQuantity);
+
                 } else {
                     liveQuantityTextview.setText("" + myOrderQuantity);
                     updateInformation(myOrderQuantity);
+                }
+
+                if (productQuantity > 0) {
+
+                    decreaseStock();
+
                 }
             }
         });
 
     }
 
+    private void decreaseStock() {
+        if (productQuantity != 0) {
+            int decreaseValue = productQuantity - 1;
+
+            ContentValues values = new ContentValues();
+            values.put(InventoryEntrys.PRODUCT_QUANTITY, decreaseValue);
+
+            getContentResolver().update(mCurrentUri, values, null, null);
+        }
+
+    }
+
     private void updateInformation(int localQuantity) {
 
-        final int productQuantity = Integer.parseInt(quantityOrder.getText().toString().trim());
 
         int totalWeight = localQuantity * productWeight;
 
         int totalPrice = (int) (localQuantity * productPrice);
 
-        newValue = productQuantity + localQuantity;
+        int newValue = productQuantity + localQuantity;
 
         if (newValue < 0) {
 
